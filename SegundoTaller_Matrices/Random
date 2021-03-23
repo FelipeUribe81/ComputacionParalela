@@ -1,0 +1,4 @@
+// Numero Aleatorio
+int intervalo = 10;
+// Intervalo entre 0 y 10 para
+int numeroAleatorio = (rand() % intervalo);
