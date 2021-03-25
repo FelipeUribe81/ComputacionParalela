@@ -25,9 +25,7 @@ Requerimientos del problema:
 #include <stdio.h>
 #include <omp.h>
 #include "modulo.h"
-//Se crea un vector de gran tamaño para reservar la memoria
-#define SIZE (1024 * 1024 * 64 * 3)
-static double MEM_CHUNK[SIZE];
+
 //Funcion que multiplica una matriz por la transpuesta de otra
 void multiMatrixT(int N, double *a, double *b, double *c)
 {
@@ -36,34 +34,54 @@ void multiMatrixT(int N, double *a, double *b, double *c)
     for (i = 0; i < N; i++)
     {
         for (j = 0; j < N; j++)
-        {
+        {   
+            //double *auxA, *auxB, suma = 0;  
             double suma = 0;
-            for (k = 0; k < N; k++)
-            {
+            //auxA = a+(i*N);
+            //auxB = b+(j*N);    
+            //for (k= 0; k < N; k++, auxA++, auxB++){
+            for (k = 0; k < N; k++){
+                //suma += (*auxA * *auxB);
                 suma += (a[k + i * N] * b[k + j * N]);
             }
             c[i * N + j] = suma;
         }
     }
 }
+
 //Devuelve una matriz en su propia transpuesta
-double *transposeMatrix(int N, double *matrix)
+double **transposeMatrixDynamic(int N, double **matrix)
 {
-    double *tr;
-    tr = matrix + N * N;
-    int i, j;
+    double **tr;
+        int i, j;
+
+/*     // Se reserva de forma dinamica el espacio de memoria para cada una de las matrices de tamaño N * N
+    if ((tr = (double **)malloc(N * sizeof(double *))) == NULL){
+        printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
+        return -1;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        if ((tr[i] = (double *)malloc(N * sizeof(double))) == NULL){
+            printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
+            return -1;
+        }
+    } */
+
 #pragma omp for
     for (i = 0; i < N; i++)
     {
         for (j = 0; j < N; j++)
         {
             //printf("%f\t",matrix[i+j*N]);
-            tr[j + i * N] = matrix[i + j * N];
+            *(*(tr+j) + i)  = *(*(matrix + i) + j);
         }
         //printf("\n");
     }
     return tr;
 }
+
 //Funcion principal
 int main(int argc, char **argv)
 {
@@ -83,13 +101,29 @@ int main(int argc, char **argv)
     argc--;
     argv++;
 
-    //Se le asigna una porcion del vector creado a cada matriz
-    double *a;
-    double *b;
-    double *c;
+    double **MtxA = NULL, **MtxB = NULL, **MtxC = NULL;
 
-    a = MEM_CHUNK;
-    b = a + N * N;
+
+    // Se reserva de forma dinamica el espacio de memoria para cada una de las matrices de tamaño N * N
+
+    if ((MtxA = (double **)malloc(N * sizeof(double *))) == NULL ||
+        (MtxB = (double **)malloc(N * sizeof(double *))) == NULL ||
+        (MtxC = (double **)malloc(N * sizeof(double *))) == NULL)
+    {
+        printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
+        return -1;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        if ((MtxA[i] = (double *)malloc(N * sizeof(double))) == NULL ||
+            (MtxB[i] = (double *)malloc(N * sizeof(double))) == NULL ||
+            (MtxC[i] = (double *)malloc(N * sizeof(double))) == NULL)
+        {
+            printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
+            return -1;
+        }
+    }
 
     //Declaracion del pragma omp
     omp_set_num_threads(hilos);
@@ -98,22 +132,23 @@ int main(int argc, char **argv)
 
 #pragma omp master
 
-        initMatrix(N, a, b);
+        initMatrixDynamic(N, MtxA, MtxB, MtxC);
+        double **MtxD = transposeMatrixDynamic(N, MtxB);
         sample_start();
-        double *d = transposeMatrix(N, b);
-        c = d + N * N;
-        //printf("Matriz A \n");
-        //printMatrix(N, a);
-        //printf("\n");
-        //printf("Matriz B \n");
-        //printMatrix(N, b);
-        //printf("\n");
-        //printf("Matriz transpuesta: \n");
-        //printMatrix(N,d);printf("\n");
+
+        printf("Matriz A \n");
+        printMatrixDynamic(N, MtxA);
+        printf("\n");
+        printf("Matriz B \n");
+        printMatrixDynamic(N, MtxB);
+        printf("\n");
+        printf("Matriz transpuesta: \n");
+        printMatrixDynamic(N,MtxD);
+        printf("\n");
 
         //printf("Multiplicación con trasnpuesta: \n");
         //Los comentarios son simples pruebas de impresion
-        multiMatrixT(N, a, d, c);
+        //multiMatrixT(N, MtxA, MtxD, MtxC);
         sample_stop();
         sample_end();
         //printMatrix(N, c);
