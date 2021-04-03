@@ -143,7 +143,7 @@ int main(int argc, char **argv)
         printMatrixDynamic(N, MtxB);
         printf("\n");
         printf("Matriz transpuesta: \n");
-        printMatrixDynamic(N,MtxD);
+        //printMatrixDynamic(N,MtxD);
         printf("\n");
 
         //printf("Multiplicación con trasnpuesta: \n");
