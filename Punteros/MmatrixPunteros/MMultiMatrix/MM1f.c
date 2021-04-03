@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 #pragma omp master
 
         initMatrix(N, a, b);
-        sample_start();
+        
         double *d = transposeMatrix(N, b);
         c = d + N * N;
         //printf("Matriz A \n");
@@ -117,6 +117,7 @@ int main(int argc, char **argv)
 
         //printf("Multiplicación con trasnpuesta: \n");
         //Los comentarios son simples pruebas de impresion
+        sample_start();
         multiMatrixT(N, a, d, c);
         sample_stop();
         sample_end();
