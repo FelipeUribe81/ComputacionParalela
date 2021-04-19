@@ -9,7 +9,7 @@
                                     CC: 1003559564
 ***************************/
 /**************************
-MULTIPLICACIÓN DE MATRICES (Algortimo con matriz traspuesta)
+MULTIPLICACIÓN DE MATRICES (Algortimo tradicional)
 ***************************
 Requerimientos del problema:
 1.- Ficheros a subir: Makefile (automatización compilación), 1 módulo, 2 principales (clásica y transpuesta), 1 interfaz
@@ -26,63 +26,6 @@ Requerimientos del problema:
 #include <omp.h>
 #include "modulo.h"
 
-//Funcion que multiplica una matriz por la transpuesta de otra
-void multiMatrixT(int N, double **a, double **b, double **c)
-{
-    int i, j, k;
-#pragma omp for
-    for (i = 0; i < N; i++)
-    {
-        for (j = 0; j < N; j++)
-        {   
-            //double *auxA, *auxB, suma = 0;  
-            double suma = 0;
-            //auxA = a+(i*N);
-            //auxB = b+(j*N);    
-            //for (k= 0; k < N; k++, auxA++, auxB++){
-            for (k = 0; k < N; k++){
-                //suma += (*auxA * *auxB);
-                //suma += (a[k + i * N] * b[k + j * N]);
-                suma += (*(*(a + k) + i)) * (*(*(b + k) + j));
-            }
-            *(*(c + j) + i) = suma;
-        }
-    }
-}
-
-//Devuelve una matriz en su propia transpuesta
-double **transposeMatrixDynamic(int N, double **matrix)
-{
-    double **tr;
-        int i, j;
-
-   // Se reserva de forma dinamica el espacio de memoria para cada una de las matrices de tamaño N * N
-    if ((tr = (double **)malloc(N * sizeof(double *))) == NULL){
-        printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
-        return -1;
-    }
-
-    for (int i = 0; i < N; i++)
-    {
-        if ((tr[i] = (double *)malloc(N * sizeof(double))) == NULL){
-            printf("INSUFICIENTE ESPACIO DE MEMORIA\n");
-            return -1;
-        }
-    }
-
-#pragma omp for
-    for (i = 0; i < N; i++)
-    {
-        for (j = 0; j < N; j++)
-        {
-            //printf("%f\t",matrix[i+j*N]);
-            *(*(tr+j) + i)  = *(*(matrix + i) + j);
-        }
-        //printf("\n");
-    }
-    return tr;
-}
-
 //Funcion principal
 int main(int argc, char **argv)
 {
@@ -97,13 +40,12 @@ int main(int argc, char **argv)
     int N = atoi(argv[1]);
     argc--;
     argv++;
-    //Numero de hilos
+    //numero de hilos
     int hilos = atoi(argv[1]);
     argc--;
     argv++;
 
     double **MtxA = NULL, **MtxB = NULL, **MtxC = NULL;
-
 
     // Se reserva de forma dinamica el espacio de memoria para cada una de las matrices de tamaño N * N
 
@@ -130,28 +72,38 @@ int main(int argc, char **argv)
     omp_set_num_threads(hilos);
 #pragma omp parallel
     {
-
 #pragma omp master
 
         initMatrixDynamic(N, MtxA, MtxB, MtxC);
-        double **MtxD = transposeMatrixDynamic(N, MtxB);
+
+        printf("Matriz A \n");
+        printMatrixDynamic(N, MtxA);
+        printf("\n");
+        printf("Matriz B \n");
+        printMatrixDynamic(N, MtxB);
+        printf("\n");
         sample_start();
-
-        //printf("Matriz A \n");
-        //printMatrixDynamic(N, MtxA);
-        //printf("\n");
-        //printf("Matriz B \n");
-        //printMatrixDynamic(N, MtxB);
-        //printf("\n");
-        //printf("Matriz transpuesta: \n");
-        //printMatrixDynamic(N,MtxD);
-        //printf("\n");
-
-        //printf("Multiplicación con trasnpuesta: \n");
-        //Los comentarios son simples pruebas de impresion
-        multiMatrixT(N, MtxA, MtxD, MtxC);
-        sample_stop();
-        sample_end();
-        //printMatrixDynamic(N, MtxC);
-    }
+        int i, j, k;
+#pragma omp for
+        for (i = 0; i < N; i++)
+        {
+            for (j = 0; j < N; j++)
+            {
+                double *auxA, *auxB, suma = 0.0;
+                auxA = *(MtxA + i);
+                auxB = *(MtxB + j);
+                for (k = N; k > 0; k--, auxA++, auxB++)
+                {
+                    suma += (*auxA * *auxB);
+                }
+                *(*(MtxC + i) + j) = suma;
+            }
+        }
+    //Los comentarios son simples pruebas de impresion    multiMatrix(N, MtxA, MtxB, MtxC);
+    sample_stop();
+}
+printf("\n");
+printMatrixDynamic(N, MtxC);
+sample_end();
+matrixDynamicFree(N, MtxA, MtxB, MtxC);
 }

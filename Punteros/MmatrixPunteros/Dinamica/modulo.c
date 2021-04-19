@@ -25,9 +25,9 @@ void initMatrixDynamic(int N, double **a, double **b, double **c)
     {
         for (j = 0; j < N; j++)
         {
-            *(*(a + j) + i) = 2.01 * (i + j);
-            *(*(b + j) + i) = 3.01 * (i - j);
-            *(*(c + j) + i) = 3.01;
+            *(*(a + j) + i) = 2.2 * (i + j);
+            *(*(b + j) + i) = 3.7 * (i + j);
+            *(*(c + j) + i) = 1.0;
         }
     }
 }

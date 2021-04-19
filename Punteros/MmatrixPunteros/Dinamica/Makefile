@@ -3,7 +3,7 @@ FLAGS = -pedantic -Wall -fopenmp
 OBJ = -c
 
 Classic = MM1cDynamic
-WithoutFuntions = MM1cDynamicSF
+WithoutFuntions = MM1fDynamicSF
 
 PROGS = $(Classic) $(WithoutFuntions)
 
