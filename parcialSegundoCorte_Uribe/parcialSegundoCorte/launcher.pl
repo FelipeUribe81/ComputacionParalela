@@ -33,7 +33,7 @@ foreach $benchmark (@benchmarks){
      foreach $c (@cores) {
 
 
-      $file = "outputs/$exe".".csv";
+      $file = "sols/$exe".".csv";
     #  $file = "$Path/"."outputs/"."$exe"."-Size"."$size"."-.csv";
     #  print "file: $file \n";
 	  system("echo $exe-Size-$size-cores-$c >> $file");
