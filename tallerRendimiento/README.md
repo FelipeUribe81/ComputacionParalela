@@ -10,9 +10,9 @@ Entra al direcctorio /tallerRendimiento
 
 Debes tener instalado Cython y Python, de lo contrario debes instalarlo
 
->	sudo apt update
-> sudo apt install python3
-> sudo apt install python3-pip
+>	sudo apt update <br/>
+> sudo apt install python3 <br/>
+> sudo apt install python3-pip <br/>
 > pip3 install Cython
 
 Si está instalado, debes seguir las siguientes instrucciones
