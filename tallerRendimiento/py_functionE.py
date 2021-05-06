@@ -1,15 +1,10 @@
 ##############################################################################
-#                             UNIVERSIDAD SERGIO ARBOLEDA
-#                         COMPUTACIÓN PARALELA Y DISTRIBUIDA
-#                                 Felipe Uribe Guevara
-#                                    CC: 1000970791
+#                          UNIVERSIDAD SERGIO ARBOLEDA
+#                      COMPUTACIÓN PARALELA Y DISTRIBUIDA
+#                            Felipe Uribe Guevara
+#                               CC: 1000970791
 ##############################################################################
-#Comparativa de rendimiento entre Python y Cython
-#Requerimientos del problema:
-#1.- Escribir la función rbf_network y la función principal (test) en Python.
-#2.- Trancribir la función rbf_network y el test a Cython.
-#3.- Realizar una comparativa en cuanto al rendimiento en Cython.
-#4.- Graficar el 
+# py_functionE.py
 ###############################################################################
 
 from math import exp
