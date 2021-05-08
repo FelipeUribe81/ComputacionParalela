@@ -2,7 +2,7 @@
 #from math import sqrt
 cimport cython 
 
-cdef extern from "math.h":
+def extern from "math.h":
         double sqrt(double x) nogil
 
 cdef class Planet(object):
